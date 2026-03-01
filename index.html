@@ -1,594 +1,720 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>全身肌肉3D解剖 · 開鏈閉鏈 · 完整功能解剖（模型強化版）</title>
-    <!-- 使用 Tailwind CSS 輕量化樣式 -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基礎班呼吸練習 · 課堂筆記 · ONE2FIT</title>
     <style>
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #0b1119; margin: 0; overflow: hidden; }
-        .muscle-list, .kinesiology-list { scrollbar-width: thin; scrollbar-color: #4b5563 #1e2937; }
-        .muscle-list::-webkit-scrollbar, .kinesiology-list::-webkit-scrollbar { width: 6px; }
-        .muscle-list::-webkit-scrollbar-track, .kinesiology-list::-webkit-scrollbar-track { background: #1e2937; }
-        .muscle-list::-webkit-scrollbar-thumb, .kinesiology-list::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 12px; }
-        .muscle-item { transition: all 0.1s ease; border-left: 2px solid transparent; }
-        .muscle-item:hover { background: #26303f; border-left-color: #3b82f6; cursor: pointer; }
-        .muscle-item.selected { background: #1e3a5f; border-left-color: #f97316; }
-        details > summary { list-style: none; cursor: pointer; }
-        details summary::-webkit-details-marker { display: none; }
-        details[open] summary .chevron { transform: rotate(90deg); }
-        .kinesiology details summary { font-weight: 600; color: #fcd34d; }
-        .kinesiology .action-block { background: #1a2634; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #f97316; }
-        .action-title { font-size: 1.1rem; font-weight: 700; color: #fbbf24; margin-bottom: 0.5rem; }
-        .badge-okc { background: #0e7c5e; color: white; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; }
-        .badge-ckc { background: #b4533b; color: white; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; }
-        .muscle-tag { background: #2d3b4f; color: #b0c4de; padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.7rem; display: inline-block; margin-right: 0.3rem; margin-bottom: 0.3rem; }
-        #canvas-container { height: 100vh; width: 100%; background: #0b1119; display: block; }
-        .label-card { background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 24px; font-size: 14px; border: 1px solid #f97316; backdrop-filter: blur(4px); }
-        /* 確保左側面板不遮擋畫布 */
-        .h-screen { height: 100vh; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #eef3e8;
+            font-family: 'Segoe UI', '微軟正黑體', 'Helvetica Neue', sans-serif;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .notebook {
+            max-width: 780px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 32px 32px 32px 32px;
+            box-shadow: 0 25px 50px -12px rgba(40, 60, 30, 0.3);
+            overflow: hidden;
+            border: 1px solid #d0dec5;
+        }
+        .header {
+            background: linear-gradient(135deg, #5f8b5f 0%, #3f6e3f 100%);
+            color: white;
+            padding: 32px 28px 24px 28px;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .header h1 span {
+            font-weight: 300;
+            font-size: 1.4rem;
+            opacity: 0.9;
+        }
+        .header .sub {
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .header .sub img {
+            filter: brightness(0) invert(1);
+            width: 20px;
+            opacity: 0.8;
+        }
+        .logo-place {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
+        .content {
+            padding: 28px 28px 36px 28px;
+            background: #fefcf5;
+        }
+        .instructor {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed #cbd5b8;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            font-size: 1.1rem;
+            color: #2c4a2c;
+        }
+        .instructor strong {
+            background: #e4efe0;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #2f5430;
+        }
+        .breath-category {
+            margin-bottom: 40px;
+        }
+        .cat-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #2d5a2d;
+            border-left: 8px solid #9bbb7b;
+            padding-left: 18px;
+            margin-bottom: 22px;
+            letter-spacing: 1px;
+        }
+        .practice-card {
+            background: #ffffff;
+            border: 1px solid #dde8d2;
+            border-radius: 28px;
+            padding: 18px 22px 22px 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+            transition: 0.2s;
+        }
+        .practice-card:hover {
+            border-color: #9bbb7b;
+            box-shadow: 0 8px 18px rgba(100, 130, 80, 0.1);
+        }
+        .practice-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+        .practice-name {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #1f3b1f;
+        }
+        .practice-name small {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #6b8f6b;
+            margin-left: 6px;
+        }
+        .practice-tip {
+            background: #f1f7ec;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            color: #456745;
+        }
+        .field-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px 20px;
+            margin: 15px 0 10px 0;
+        }
+        .field-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f2f8ee;
+            padding: 6px 16px 6px 12px;
+            border-radius: 50px;
+            color: #2d542d;
+        }
+        .field-label span {
+            font-size: 1rem;
+        }
+        .field-label input, .field-label select {
+            border: none;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 30px;
+            font-size: 1rem;
+            width: 80px;
+            text-align: center;
+            border: 1px solid #c5d6b8;
+            font-weight: 500;
+            color: #1e3a1e;
+            outline: none;
+        }
+        .field-label input:focus, .field-label select:focus {
+            border-color: #6f9e6f;
+            box-shadow: 0 0 0 3px rgba(110, 150, 90, 0.2);
+        }
+        .feeling-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .feeling-btn {
+            background: #f0f5ea;
+            border: 1px solid #cbdbbd;
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 0.95rem;
+            color: #325a32;
+            cursor: pointer;
+            transition: 0.1s;
+            user-select: none;
+        }
+        .feeling-btn.selected {
+            background: #9bbb7b;
+            border-color: #5f825f;
+            color: white;
+            font-weight: 500;
+        }
+        .remark-area {
+            margin: 16px 0 6px 0;
+        }
+        .remark-area textarea {
+            width: 100%;
+            border: 1px solid #d4e2ca;
+            border-radius: 24px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            background: #fcfdfa;
+            resize: vertical;
+            font-family: inherit;
+        }
+        .divider-light {
+            height: 1px;
+            background: linear-gradient(90deg, #d0e0c0, transparent);
+            margin: 20px 0 10px 0;
+        }
+        .goals {
+            background: #eaf1e4;
+            border-radius: 32px;
+            padding: 20px 24px;
+            margin: 30px 0 20px 0;
+        }
+        .goals h3 {
+            color: #284f28;
+            font-weight: 500;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+        }
+        .goal-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .goal-label {
+            min-width: 140px;
+            color: #2b4e2b;
+            font-weight: 500;
+        }
+        .goal-track {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .goal-track input {
+            width: 70px;
+            background: white;
+            border: 1px solid #b9cfae;
+            border-radius: 40px;
+            padding: 8px 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .goal-arrow {
+            color: #6f946f;
+            font-size: 1.2rem;
+        }
+        .goal-comment {
+            color: #4b6e4b;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+        .advanced-section {
+            background: #f4f7ef;
+            border-radius: 28px;
+            padding: 22px 24px;
+            margin-top: 30px;
+            border: 1px dashed #b3cbab;
+        }
+        .advanced-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #386338;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .generate-area {
+            display: flex;
+            justify-content: center;
+            margin: 45px 0 20px;
+        }
+        .gen-btn {
+            background: #5f8b5f;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 500;
+            padding: 18px 42px;
+            border-radius: 50px;
+            box-shadow: 0 12px 18px -8px #8fab87;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid #7ba07b;
+            letter-spacing: 1.5px;
+        }
+        .gen-btn:hover {
+            background: #4f7a4f;
+            transform: scale(0.98);
+            box-shadow: 0 6px 12px -6px #6f8f6f;
+        }
+        .footer-note {
+            text-align: center;
+            color: #6f866f;
+            font-size: 0.9rem;
+            margin-top: 16px;
+        }
+        /* 輸出圖片區 (平時隱藏) */
+        #outputImageContainer {
+            display: none;
+            margin-top: 30px;
+            background: white;
+            border-radius: 40px;
+            padding: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 2px solid #bbd6aa;
+        }
+        #outputImageContainer.show {
+            display: block;
+        }
+        #notesImage {
+            width: 100%;
+            border-radius: 24px;
+            border: 1px solid #cfe1c0;
+        }
+        .back-btn {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .back-btn button {
+            background: #e3ecdb;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            color: #3d613d;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        hr {
+            border: none;
+            border-top: 2px dotted #cbdbb8;
+        }
     </style>
 </head>
-<body class="text-gray-200 antialiased overflow-hidden">
-    <!-- 整體佈局: 左側面板(肌肉清單 + 功能解剖) + 右側3D畫布 -->
-    <div class="flex h-screen">
-        <!-- 左側可滾動面板 (1/3寬度) -->
-        <div class="w-full md:w-1/3 lg:w-1/3 bg-[#1a222f] border-r border-gray-700/50 flex flex-col overflow-hidden shadow-2xl z-10">
-            <!-- 標頭與搜尋 -->
-            <div class="p-4 border-b border-gray-700 bg-[#1e2a3a] sticky top-0 z-20">
-                <h1 class="text-xl font-bold text-orange-400 tracking-wide flex items-center gap-2">
-                    <span class="text-2xl">🧬</span> 全身肌肉解剖 + 功能分析
-                </h1>
-                <input type="text" id="search-input" placeholder="搜尋肌肉 (例: 肱二頭肌)" class="mt-3 w-full bg-[#0f172a] border border-gray-600 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/50" />
-            </div>
-
-            <!-- 兩部分內容: 肌肉清單 與 功能解剖 -->
-            <div class="flex-1 overflow-y-auto muscle-list p-3 space-y-4" id="left-panel-content">
-                <!-- 肌肉清單區塊 (折疊) -->
-                <div class="bg-[#1f2b39] rounded-xl p-3">
-                    <h2 class="text-orange-300 font-bold mb-2 flex items-center gap-1">💪 全身肌肉列表 <span class="text-xs text-gray-400">(點擊名稱高亮3D)</span></h2>
-                    <div id="muscle-list-container" class="space-y-2 text-sm">
-                        <!-- 由JS動態生成 -->
-                        <div class="text-center py-10 text-gray-500">載入肌肉清單中...</div>
-                    </div>
+<body>
+    <div class="notebook" id="notebookWidget">
+        <div class="header">
+            <h1>呼吸練習·課堂筆記 <span>基礎班</span></h1>
+            <div class="sub">
+                <div class="logo-place">
+                    <span>🏛️ ONE2FIT運動康復及營養中心</span>
                 </div>
-
-                <!-- 功能解剖區塊 (開鏈/閉鏈/主動肌等) -->
-                <div class="bg-[#1f2b39] rounded-xl p-4 kinesiology">
-                    <h2 class="text-amber-300 font-bold text-lg mb-3 flex items-center gap-2">⚙️ 功能解剖 · 開鏈(OKC) / 閉鏈(CKC)</h2>
-                    <div class="space-y-4" id="kinesiology-container">
-                        <!-- 動態插入 -->
-                    </div>
+                <div class="logo-place">
+                    <span>🧘 講師 Gavin</span>
                 </div>
             </div>
+        </div>
+        <div class="content" id="editableSection">
+            <!-- 講師提示 -->
+            <div class="instructor">
+                <span>🌱 學員姓名： <input type="text" placeholder="你的名字" style="border:none;background:#f4f9ef;padding:6px 12px;border-radius:30px;width:150px;" id="studentName"></span>
+                <span><strong># 自我覺察 · 不用完美</strong></span>
+            </div>
 
-            <!-- 底部資訊 -->
-            <div class="border-t border-gray-800 p-3 text-xs text-gray-500 bg-[#151e2a]">
-                <span class="block">🖱️ 點擊肌肉名稱 → 3D部位高亮 (模型使用高對比色，確保可見)</span>
+            <!-- 基礎放鬆練習 -->
+            <div class="breath-category">
+                <div class="cat-title">🧘 腹式呼吸 · 基礎放鬆</div>
+                <div class="practice-card">
+                    <div class="practice-header">
+                        <div class="practice-name">① 腹式呼吸 <small>放鬆錨點</small></div>
+                        <div class="practice-tip">吸氣肚子鼓起 · 吐氣肚子內收</div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-label"><span>吸氣秒數</span> <input type="number" id="bellyIn" value="3" min="1" max="15"> 秒</div>
+                        <div class="field-label"><span>吐氣秒數</span> <input type="number" id="bellyOut" value="4" min="1" max="20"> 秒</div>
+                    </div>
+                    <div class="feeling-select" id="bellyFeeling">
+                        <span class="feeling-btn">😌 放鬆</span>
+                        <span class="feeling-btn">😐 平穩</span>
+                        <span class="feeling-btn">😅 有點卡</span>
+                        <span class="feeling-btn">💭 難以集中</span>
+                    </div>
+                    <div class="remark-area">
+                        <textarea placeholder✍️ 備註 (例如「肚子有脹感」、「肩頸較鬆」… )" rows="1" id="bellyNote"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D腹式呼吸 -->
+            <div class="breath-category">
+                <div class="cat-title">🔁 3D腹式呼吸 · 全方位擴張</div>
+                <div class="practice-card">
+                    <div class="practice-header">
+                        <div class="practice-name">② 3D 擴張 <small>前、側、後</small></div>
+                        <div class="practice-tip">想像腰部像輪胎充氣</div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-label"><span>前方鼓起</span> <input type="number" id="d3Front" value="2" min="0" max="10" step="0.5"> 分</div>
+                        <div class="field-label"><span>側腰擴張</span> <input type="number" id="d3Side" value="1" min="0" max="10" step="0.5"> 分</div>
+                        <div class="field-label"><span>後腰感覺</span> <input type="number" id="d3Back" value="1" min="0" max="10" step="0.5"> 分</div>
+                    </div>
+                    <div class="feeling-select" id="d3Feeling">
+                        <span class="feeling-btn">🌊 均勻撐開</span>
+                        <span class="feeling-btn">🎈 前面明顯</span>
+                        <span class="feeling-btn">🔇 側腰無感</span>
+                        <span class="feeling-btn">🧐 繼續體會</span>
+                    </div>
+                    <div class="remark-area">
+                        <textarea placeholder="哪一邊比較緊？或者很順暢？" rows="1" id="d3Note"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 吸氣長度訓練 4→6→8→10 -->
+            <div class="breath-category">
+                <div class="cat-title">⏳ 吸氣長度訓練 · 逐步延長</div>
+                <div class="practice-card">
+                    <div class="practice-header">
+                        <div class="practice-name">③ 吸氣挑戰 <small>4→6→8→10秒</small></div>
+                        <div class="practice-tip">順暢為主，不要憋氣</div>
+                    </div>
+                    <div class="goal-item">
+                        <span class="goal-label">目前最長吸氣</span>
+                        <div class="goal-track">
+                            <input type="number" id="inhaleCurr" value="4" min="2" max="20"> 秒
+                            <span class="goal-arrow">➡️ 目標</span>
+                            <input type="number" id="inhaleGoal" value="6" min="4" max="20"> 秒
+                        </div>
+                    </div>
+                    <div class="feeling-select" id="inhaleFeeling">
+                        <span class="feeling-btn">🫁 還能延長</span>
+                        <span class="feeling-btn">⏸️ 中間會卡</span>
+                        <span class="feeling-btn">😤 胸部先抬</span>
+                        <span class="feeling-btn">✅ 平順</span>
+                    </div>
+                    <div class="remark-area">
+                        <textarea placeholder="例如：吸到第8秒時肋骨很緊……" rows="1" id="inhaleNote"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 吐氣長度訓練 6→8→10→12 -->
+            <div class="breath-category">
+                <div class="cat-title">🍃 吐氣長度訓練 · 穩定控制</div>
+                <div class="practice-card">
+                    <div class="practice-header">
+                        <div class="practice-name">④ 吐氣挑戰 <small>6→8→10→12秒</small></div>
+                        <div class="practice-tip">像吹風一樣細長</div>
+                    </div>
+                    <div class="goal-item">
+                        <span class="goal-label">目前最長吐氣</span>
+                        <div class="goal-track">
+                            <input type="number" id="exhaleCurr" value="5" min="3" max="30"> 秒
+                            <span class="goal-arrow">➡️ 目標</span>
+                            <input type="number" id="exhaleGoal" value="8" min="4" max="30"> 秒
+                        </div>
+                    </div>
+                    <div class="feeling-select" id="exhaleFeeling">
+                        <span class="feeling-btn">🌬️ 穩定輸出</span>
+                        <span class="feeling-btn">💨 太快沒氣</span>
+                        <span class="feeling-btn">📉 後半沒力</span>
+                        <span class="feeling-btn">🧘 腹部收緊</span>
+                    </div>
+                    <div class="remark-area">
+                        <textarea placeholder="吐到最後會不會抖？或者很舒暢？" rows="1" id="exhaleNote"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1:2呼吸法 情緒急救包 -->
+            <div class="breath-category">
+                <div class="cat-title">🆘 1:2呼吸法 · 情緒急救包</div>
+                <div class="practice-card">
+                    <div class="practice-header">
+                        <div class="practice-name">⑤ 吸3吐6 <small>吸:吐 = 1:2</small></div>
+                        <div class="practice-tip">副交感神經開關</div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-label"><span>吸氣秒數</span> <input type="number" id="ratioIn" value="3" min="2" max="10"></div>
+                        <div class="field-label"><span>吐氣秒數</span> <input type="number" id="ratioOut" value="6" min="4" max="20"></div>
+                    </div>
+                    <div class="feeling-select" id="ratioFeeling">
+                        <span class="feeling-btn">😌 明顯放鬆</span>
+                        <span class="feeling-btn">🧠 腦袋安靜</span>
+                        <span class="feeling-btn">⏱️ 吐氣不夠長</span>
+                        <span class="feeling-btn">🔄 節奏順暢</span>
+                    </div>
+                    <div class="remark-area">
+                        <textarea placeholder="做完情緒有什麼變化？" rows="1" id="ratioNote"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 進階嘗試 (選填) -->
+            <div class="advanced-section">
+                <div class="advanced-title">✨ 進階練習 (嘗試一下)</div>
+                <!-- 分段式吸氣 吸→停→吸→停→吸→吐 -->
+                <div class="practice-card" style="background: #f8faf5;">
+                    <div class="practice-header">
+                        <div class="practice-name">分段吸氣 <small>吸↗停↗吸↗停↗吸↘吐</small></div>
+                    </div>
+                    <div class="field-row">
+                        <span style="color:#3b603b;">完成次數：</span>
+                        <input type="number" id="segInhaleCount" value="0" min="0" max="20" style="width:70px;"> 組
+                    </div>
+                    <div class="feeling-select" id="segInFeeling">
+                        <span class="feeling-btn">🧩 吸得更深</span>
+                        <span class="feeling-btn">🌀 胸口擴張</span>
+                        <span class="feeling-btn">🤔 有點不順</span>
+                        <span class="feeling-btn">⛔ 先跳過</span>
+                    </div>
+                    <textarea placeholder="例如：第三次吸氣時肋骨撐開有感" rows="1" id="segInNote" style="margin-top:8px;width:100%;border-radius:20px;padding:10px;"></textarea>
+                </div>
+                <!-- 分段吐氣 吐→停→吐→停→吐→停 -->
+                <div class="practice-card" style="background: #f8faf5; margin-top:12px;">
+                    <div class="practice-header">
+                        <div class="practice-name">分段吐氣 <small>吐↘停↘吐↘停↘吐↘停</small></div>
+                    </div>
+                    <div class="field-row">
+                        <span style="color:#3b603b;">完成次數：</span>
+                        <input type="number" id="segExhaleCount" value="0" min="0" max="20" style="width:70px;"> 組
+                    </div>
+                    <div class="feeling-select" id="segExFeeling">
+                        <span class="feeling-btn">🔥 核心明顯</span>
+                        <span class="feeling-btn">🌪️ 排空感</span>
+                        <span class="feeling-btn">😮‍💨 容易憋氣</span>
+                        <span class="feeling-btn">👍 順暢</span>
+                    </div>
+                    <textarea placeholder="吐氣分段時腹部收縮的感覺" rows="1" id="segExNote" style="margin-top:8px;width:100%;border-radius:20px;padding:10px;"></textarea>
+                </div>
+            </div>
+
+            <!-- 產生圖片按鈕 -->
+            <div class="generate-area">
+                <button class="gen-btn" id="generateBtn">📸 完成 · 生成圖片筆記</button>
+            </div>
+            <div class="footer-note">
+                記錄當下的狀態，每一次呼吸都是獨一無二的
             </div>
         </div>
 
-        <!-- 右側 3D 畫布區域 -->
-        <div class="flex-1 relative bg-black" id="canvas-parent">
-            <div id="canvas-container"></div>
-            <!-- 控制提示 -->
-            <div class="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-full border border-gray-600 z-20">
-                ⚡ 拖曳旋轉 · 滾輪縮放 · 點擊左側肌肉高亮
+        <!-- 圖片輸出預覽區 (生成後顯示) -->
+        <div id="outputImageContainer">
+            <h3 style="color:#2f542f; margin-bottom: 15px;">🧾 你的呼吸練習筆記</h3>
+            <canvas id="notesCanvas" style="width:100%; height:auto; background:white; border-radius:24px;"></canvas>
+            <div class="back-btn">
+                <button id="backEditBtn">返回繼續編輯</button>
             </div>
-            <!-- 當前選擇的肌肉名稱 -->
-            <div id="selected-muscle-name" class="absolute top-4 left-4 bg-orange-600/90 text-white px-4 py-2 rounded-full text-sm font-medium z-20 shadow-lg border border-orange-300/30 hidden">
-                🧬 <span id="selected-muscle-text">胸大肌</span>
-            </div>
-            <!-- 測試用提示：如果看到紅色方塊表示Three.js正常 -->
-            <div class="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-md text-xs z-20">3D渲染啟用中</div>
         </div>
     </div>
-
-    <!-- 載入 Three.js 核心與輔助庫 (使用穩定CDN) -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
-            }
-        }
-    </script>
-
-    <script type="module">
-        // ----- 初始化 Three.js 場景、相機、渲染器 -----
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
-
-        console.log('Three.js 初始化開始');
-
-        // 確保容器尺寸正確
-        const container = document.getElementById('canvas-container');
-        if (!container) {
-            console.error('無法找到 canvas-container');
-        }
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-
-        // 場景
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0b1119); // 深藍黑背景
-
-        // 相機
-        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        camera.position.set(5, 3, 8);
-        camera.lookAt(0, 1.5, 0);
-
-        // WebGL渲染器
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-        renderer.setSize(width, height);
-        renderer.shadowMap.enabled = false; // 為了性能
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        container.appendChild(renderer.domElement);
-
-        // CSS2渲染器 (用於標籤)
-        const labelRenderer = new CSS2DRenderer();
-        labelRenderer.setSize(width, height);
-        labelRenderer.domElement.style.position = 'absolute';
-        labelRenderer.domElement.style.top = '0';
-        labelRenderer.domElement.style.left = '0';
-        labelRenderer.domElement.style.pointerEvents = 'none';
-        container.appendChild(labelRenderer.domElement);
-
-        console.log('渲染器建立完畢');
-
-        // 控制器
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.8;
-        controls.enableZoom = true;
-        controls.maxPolarAngle = Math.PI / 2;
-
-        // ----- 添加強烈的燈光，確保模型可見 -----
-        const ambientLight = new THREE.AmbientLight(0x404060); // 柔光
-        scene.add(ambientLight);
-        
-        const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
-        dirLight1.position.set(2, 5, 5);
-        scene.add(dirLight1);
-        
-        const dirLight2 = new THREE.DirectionalLight(0xffaa88, 0.8);
-        dirLight2.position.set(-3, 2, 4);
-        scene.add(dirLight2);
-        
-        const backLight = new THREE.PointLight(0x446688, 0.8);
-        backLight.position.set(-2, 1, -5);
-        scene.add(backLight);
-
-        // 添加輔助網格和座標軸 (幫助確認空間)
-        const gridHelper = new THREE.GridHelper(10, 20, 0x66aaff, 0x335588);
-        gridHelper.position.y = -0.8;
-        scene.add(gridHelper);
-
-        // 添加一個簡單的紅色立方體作為參考 (如果看到它，證明渲染正常)
-        const testCubeGeo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-        const testCubeMat = new THREE.MeshStandardMaterial({ color: 0xff3333, emissive: 0x330000 });
-        const testCube = new THREE.Mesh(testCubeGeo, testCubeMat);
-        testCube.position.set(1.5, 1.0, 1.0);
-        scene.add(testCube);
-        console.log('測試立方體已加入場景');
-
-        // 星星背景 (增加視覺趣味)
-        const starsGeometry = new THREE.BufferGeometry();
-        const starsCount = 800;
-        const starPositions = new Float32Array(starsCount * 3);
-        for (let i = 0; i < starsCount * 3; i += 3) {
-            starPositions[i] = (Math.random() - 0.5) * 200;
-            starPositions[i+1] = (Math.random() - 0.5) * 200;
-            starPositions[i+2] = (Math.random() - 0.5) * 200;
-        }
-        starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-        const starsMaterial = new THREE.PointsMaterial({color: 0x99aacc, size: 0.15});
-        const stars = new THREE.Points(starsGeometry, starsMaterial);
-        scene.add(stars);
-
-        // ----- 建立簡化人體模型 (使用高飽和度顏色，確保可見) -----
-        const bodyParts = new Map();
-        const originalColors = new Map();
-
-        function createPart(geometry, color, position, rotation = [0,0,0], scale = [1,1,1]) {
-            const material = new THREE.MeshPhongMaterial({ color: color, shininess: 30, emissive: 0x000000 });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(position[0], position[1], position[2]);
-            mesh.rotation.set(rotation[0], rotation[1], rotation[2]);
-            mesh.scale.set(scale[0], scale[1], scale[2]);
-            mesh.castShadow = true;
-            mesh.receiveShadow = false;
-            return mesh;
-        }
-
-        // 頭部 (紅色)
-        const head = createPart(new THREE.SphereGeometry(0.45, 32, 16), 0xff5555, [0, 2.2, 0]);
-        scene.add(head); bodyParts.set('head', head);
-        
-        // 頸部 (橙色)
-        const neck = createPart(new THREE.CylinderGeometry(0.3, 0.3, 0.4, 8), 0xffaa66, [0, 1.8, 0]);
-        scene.add(neck); bodyParts.set('neck', neck);
-        
-        // 胸部 (黃色)
-        const chest = createPart(new THREE.BoxGeometry(1.2, 0.9, 0.5), 0xffdd44, [0, 1.3, 0.1]);
-        scene.add(chest); bodyParts.set('chest', chest);
-        
-        // 腹部 (淺綠色)
-        const abdomen = createPart(new THREE.BoxGeometry(1.0, 0.8, 0.4), 0x88ff88, [0, 0.7, 0.1]);
-        scene.add(abdomen); bodyParts.set('abdomen', abdomen);
-        
-        // 背部 (藍色)
-        const back = createPart(new THREE.BoxGeometry(1.3, 1.8, 0.3), 0x4488ff, [0, 1.3, -0.3]);
-        scene.add(back); bodyParts.set('back', back);
-        
-        // 左肩 (青色)
-        const shoulderLeft = createPart(new THREE.SphereGeometry(0.35, 16), 0x33ccff, [-0.8, 1.5, 0.1]);
-        scene.add(shoulderLeft); bodyParts.set('shoulder_left', shoulderLeft);
-        
-        // 右肩 (青色)
-        const shoulderRight = createPart(new THREE.SphereGeometry(0.35, 16), 0x33ccff, [0.8, 1.5, 0.1]);
-        scene.add(shoulderRight); bodyParts.set('shoulder_right', shoulderRight);
-        
-        // 左上臂前 (紫色)
-        const armLeftFront = createPart(new THREE.CylinderGeometry(0.25, 0.25, 0.7, 8), 0xaa55ff, [-0.9, 1.0, 0.15], [0, 0, 0.2]);
-        scene.add(armLeftFront); bodyParts.set('arm_left_front', armLeftFront);
-        
-        // 右上臂前 (紫色)
-        const armRightFront = createPart(new THREE.CylinderGeometry(0.25, 0.25, 0.7, 8), 0xaa55ff, [0.9, 1.0, 0.15], [0, 0, -0.2]);
-        scene.add(armRightFront); bodyParts.set('arm_right_front', armRightFront);
-        
-        // 左上臂後 (粉紅)
-        const armLeftBack = createPart(new THREE.CylinderGeometry(0.23, 0.23, 0.65, 8), 0xff88aa, [-0.9, 1.0, -0.15], [0, 0, -0.1]);
-        scene.add(armLeftBack); bodyParts.set('arm_left_back', armLeftBack);
-        
-        // 右上臂後 (粉紅)
-        const armRightBack = createPart(new THREE.CylinderGeometry(0.23, 0.23, 0.65, 8), 0xff88aa, [0.9, 1.0, -0.15], [0, 0, 0.1]);
-        scene.add(armRightBack); bodyParts.set('arm_right_back', armRightBack);
-        
-        // 左前臂 (淡紫)
-        const forearmLeft = createPart(new THREE.CylinderGeometry(0.2, 0.16, 0.7, 6), 0xcc88ff, [-1.0, 0.45, 0.0], [0, 0, 0.1]);
-        scene.add(forearmLeft); bodyParts.set('forearm_left', forearmLeft);
-        
-        // 右前臂 (淡紫)
-        const forearmRight = createPart(new THREE.CylinderGeometry(0.2, 0.16, 0.7, 6), 0xcc88ff, [1.0, 0.45, 0.0], [0, 0, -0.1]);
-        scene.add(forearmRight); bodyParts.set('forearm_right', forearmRight);
-        
-        // 左手 (肉色)
-        const handLeft = createPart(new THREE.SphereGeometry(0.18, 6), 0xffccaa, [-1.1, 0.05, 0.05]);
-        scene.add(handLeft); bodyParts.set('hand_left', handLeft);
-        
-        // 右手 (肉色)
-        const handRight = createPart(new THREE.SphereGeometry(0.18, 6), 0xffccaa, [1.1, 0.05, 0.05]);
-        scene.add(handRight); bodyParts.set('hand_right', handRight);
-        
-        // 臀部 (棕色)
-        const glute = createPart(new THREE.BoxGeometry(1.2, 0.5, 0.6), 0xcc8844, [0, 0.4, -0.2]);
-        scene.add(glute); bodyParts.set('glute', glute);
-        
-        // 左大腿前 (亮綠)
-        const thighLeftFront = createPart(new THREE.CylinderGeometry(0.3, 0.25, 1.0, 8), 0x66ff66, [-0.5, -0.1, 0.1], [0, 0, 0.1]);
-        scene.add(thighLeftFront); bodyParts.set('thigh_left_front', thighLeftFront);
-        
-        // 右大腿前 (亮綠)
-        const thighRightFront = createPart(new THREE.CylinderGeometry(0.3, 0.25, 1.0, 8), 0x66ff66, [0.5, -0.1, 0.1], [0, 0, -0.1]);
-        scene.add(thighRightFront); bodyParts.set('thigh_right_front', thighRightFront);
-        
-        // 左大腿後 (深綠)
-        const thighLeftBack = createPart(new THREE.CylinderGeometry(0.3, 0.25, 1.0, 8), 0x33aa33, [-0.5, -0.1, -0.15], [0, 0, -0.05]);
-        scene.add(thighLeftBack); bodyParts.set('thigh_left_back', thighLeftBack);
-        
-        // 右大腿後 (深綠)
-        const thighRightBack = createPart(new THREE.CylinderGeometry(0.3, 0.25, 1.0, 8), 0x33aa33, [0.5, -0.1, -0.15], [0, 0, 0.05]);
-        scene.add(thighRightBack); bodyParts.set('thigh_right_back', thighRightBack);
-        
-        // 左小腿前 (天藍)
-        const legLeftFront = createPart(new THREE.CylinderGeometry(0.22, 0.18, 0.9, 6), 0x88ddff, [-0.5, -0.7, 0.05], [0, 0, 0.0]);
-        scene.add(legLeftFront); bodyParts.set('leg_left_front', legLeftFront);
-        
-        // 右小腿前 (天藍)
-        const legRightFront = createPart(new THREE.CylinderGeometry(0.22, 0.18, 0.9, 6), 0x88ddff, [0.5, -0.7, 0.05], [0, 0, 0.0]);
-        scene.add(legRightFront); bodyParts.set('leg_right_front', legRightFront);
-        
-        // 左小腿後 (深藍)
-        const legLeftBack = createPart(new THREE.CylinderGeometry(0.24, 0.2, 0.9, 6), 0x3366cc, [-0.5, -0.7, -0.1], [0, 0, 0.0]);
-        scene.add(legLeftBack); bodyParts.set('leg_left_back', legLeftBack);
-        
-        // 右小腿後 (深藍)
-        const legRightBack = createPart(new THREE.CylinderGeometry(0.24, 0.2, 0.9, 6), 0x3366cc, [0.5, -0.7, -0.1], [0, 0, 0.0]);
-        scene.add(legRightBack); bodyParts.set('leg_right_back', legRightBack);
-        
-        // 左足 (灰色)
-        const footLeft = createPart(new THREE.BoxGeometry(0.3, 0.15, 0.6), 0xaaaaaa, [-0.5, -1.25, 0.15], [0, 0.2, 0]);
-        scene.add(footLeft); bodyParts.set('foot_left', footLeft);
-        
-        // 右足 (灰色)
-        const footRight = createPart(new THREE.BoxGeometry(0.3, 0.15, 0.6), 0xaaaaaa, [0.5, -1.25, 0.15], [0, -0.2, 0]);
-        scene.add(footRight); bodyParts.set('foot_right', footRight);
-
-        // 儲存原始顏色
-        bodyParts.forEach((mesh, key) => {
-            originalColors.set(key, mesh.material.color.clone());
-        });
-
-        console.log('人體模型已加入，部件數量：', bodyParts.size);
-
-        // 加入CSS2D標籤 (主要肌肉)
-        function createLabel(text, position, color = '#f97316') {
-            const div = document.createElement('div');
-            div.textContent = text;
-            div.style.color = 'white';
-            div.style.fontSize = '14px';
-            div.style.fontWeight = 'bold';
-            div.style.textShadow = '1px 1px 2px black';
-            div.style.background = 'rgba(0,0,0,0.6)';
-            div.style.padding = '2px 8px';
-            div.style.borderRadius = '12px';
-            div.style.border = `1px solid ${color}`;
-            div.style.whiteSpace = 'nowrap';
-            const label = new CSS2DObject(div);
-            label.position.set(position[0], position[1], position[2]);
-            scene.add(label);
-        }
-
-        createLabel('胸大肌', [0.8, 1.3, 0.4]);
-        createLabel('腹直肌', [0.6, 0.8, 0.5]);
-        createLabel('三角肌', [1.1, 1.6, 0.2]);
-        createLabel('肱二頭肌', [1.2, 1.0, 0.3]);
-        createLabel('股四頭肌', [0.8, -0.2, 0.4]);
-        createLabel('腓腸肌', [0.7, -0.8, 0.2]);
-
-        // ----- 肌肉映射 (簡化版本，但涵蓋大部分) -----
-        const muscleMappings = new Map();
-        function mapMany(names, partKey) {
-            names.forEach(name => muscleMappings.set(name, partKey));
-        }
-
-        // 頭部肌肉 -> head
-        mapMany(["枕額肌－額腹","枕額肌－枕腹","前耳肌","上耳肌","後耳肌","眼輪匝肌","皺眉肌","降眉肌","鼻肌－橫部","鼻肌－翼部","鼻中隔下降肌","提上唇鼻翼肌","口輪匝肌","頰肌","顴大肌","顴小肌","提上唇肌","提口角肌","笑肌","降口角肌","降下唇肌","頦肌","咬肌","顳肌","內翼肌","外翼肌","上直肌","下直肌","內直肌","外直肌","上斜肌","下斜肌","提上瞼肌","頦舌肌","舌骨舌肌","莖突舌肌","顎舌肌","上縱舌肌","下縱舌肌","橫舌肌","垂直舌肌"], 'head');
-        // 頸部 -> neck
-        mapMany(["頸闊肌","胸鎖乳突肌","二腹肌","莖突舌骨肌","下顎舌骨肌","頦舌骨肌","胸骨舌骨肌","肩胛舌骨肌","胸骨甲狀肌","甲狀舌骨肌","頸長肌","頭長肌","前直肌","外側直肌","前斜角肌","中斜角肌","後斜角肌","最小斜角肌","頭後大直肌","頭後小直肌","上斜肌","下斜肌","上咽縮肌","中咽縮肌","下咽縮肌","莖突咽肌","顎咽肌","耳咽肌","環甲肌","後環杓肌","外側環杓肌","橫杓肌","斜杓肌","甲杓肌","聲帶肌"], 'neck');
-        // 背部 -> back
-        mapMany(["斜方肌","背闊肌","提肩胛肌","菱形大肌","菱形小肌","上後鋸肌","下後鋸肌","髂肋肌－腰部","髂肋肌－胸部","髂肋肌－頸部","最長肌－胸部","最長肌－頸部","最長肌－頭部","棘肌－胸部","棘肌－頸部","棘肌－頭部","半棘肌－胸部","半棘肌－頸部","半棘肌－頭部","多裂肌","旋轉肌","棘間肌","橫突間肌","提肋肌"], 'back');
-        // 胸部 -> chest
-        mapMany(["胸大肌","胸小肌","鎖骨下肌","前鋸肌","外肋間肌","內肋間肌","最內肋間肌","橫胸肌","肋下肌","橫膈膜"], 'chest');
-        // 腹部 -> abdomen
-        mapMany(["腹直肌","腹外斜肌","腹內斜肌","腹橫肌","錐狀肌","腰大肌","腰小肌","髂肌","腰方肌"], 'abdomen');
-        // 骨盆底 -> glute
-        mapMany(["提肛肌群","恥尾肌","恥直腸肌","髂尾肌","尾骨肌","球海綿體肌","坐骨海綿體肌","淺會陰橫肌","深會陰橫肌","外尿道括約肌","外肛門括約肌"], 'glute');
-        // 肩與上臂 (左側為例)
-        mapMany(["三角肌","棘上肌","棘下肌","小圓肌","肩胛下肌","大圓肌","肱二頭肌","肱肌","喙肱肌","肱三頭肌","肘肌"], 'shoulder_left');
-        // 前臂 (左)
-        mapMany(["旋前圓肌","橈側腕屈肌","掌長肌","尺側腕屈肌","指淺屈肌","指深屈肌","拇長屈肌","旋前方肌","肱橈肌","橈側腕長伸肌","橈側腕短伸肌","指伸肌","小指伸肌","尺側腕伸肌","旋後肌","拇長外展肌","拇短伸肌","拇長伸肌","食指伸肌"], 'forearm_left');
-        // 手部 (左)
-        mapMany(["拇短外展肌","拇短屈肌","對掌肌","拇收肌","小指外展肌","小指短屈肌","小指對掌肌","掌短肌","蚓狀肌","第一蚓狀肌","第二蚓狀肌","第三蚓狀肌","第四蚓狀肌","掌側骨間肌","第一掌側骨間肌","第二掌側骨間肌","第三掌側骨間肌","背側骨間肌","第一背側骨間肌","第二背側骨間肌","第三背側骨間肌","第四背側骨間肌"], 'hand_left');
-        // 臀部深層
-        mapMany(["臀大肌","臀中肌","臀小肌","闊筋膜張肌","梨狀肌","上孖肌","內閉孔肌","下孖肌","股方肌","外閉孔肌"], 'glute');
-        // 大腿前
-        mapMany(["股直肌","外側廣肌","內側廣肌","中間廣肌","縫匠肌"], 'thigh_left_front');
-        // 大腿內側
-        mapMany(["恥骨肌","內收長肌","內收短肌","內收大肌","股薄肌"], 'thigh_left_front');
-        // 大腿後
-        mapMany(["股二頭肌","半腱肌","半膜肌"], 'thigh_left_back');
-        // 小腿前外側
-        mapMany(["脛前肌","趾長伸肌","拇長伸肌","第三腓骨肌","腓骨長肌","腓骨短肌"], 'leg_left_front');
-        // 小腿後
-        mapMany(["腓腸肌","比目魚肌","蹠肌","膕肌","脛後肌","趾長屈肌","拇長屈肌"], 'leg_left_back');
-        // 足部
-        mapMany(["趾短伸肌","拇短伸肌","拇短外展肌","趾短屈肌","小趾外展肌","足底方肌","第一蚓狀肌","第二蚓狀肌","第三蚓狀肌","第四蚓狀肌","拇短屈肌","拇收肌","小趾短屈肌","第一背側骨間肌","第二背側骨間肌","第三背側骨間肌","第四背側骨間肌","第一足底骨間肌","第二足底骨間肌","第三足底骨間肌"], 'foot_left');
-
-        // ----- 生成肌肉清單HTML -----
-        const muscleData = {
-            "第1部分：頭部肌肉": {
-                "一、表情肌": ["枕額肌－額腹","枕額肌－枕腹","前耳肌","上耳肌","後耳肌","眼輪匝肌","皺眉肌","降眉肌","鼻肌－橫部","鼻肌－翼部","鼻中隔下降肌","提上唇鼻翼肌","口輪匝肌","頰肌","顴大肌","顴小肌","提上唇肌","提口角肌","笑肌","降口角肌","降下唇肌","頦肌"],
-                "二、咀嚼肌": ["咬肌","顳肌","內翼肌","外翼肌"],
-                "三、眼球運動肌": ["上直肌","下直肌","內直肌","外直肌","上斜肌","下斜肌","提上瞼肌"],
-                "四、舌肌": ["頦舌肌","舌骨舌肌","莖突舌肌","顎舌肌","上縱舌肌","下縱舌肌","橫舌肌","垂直舌肌"]
-            },
-            "第2部分：頸部肌肉": {
-                "一、頸部表層肌": ["頸闊肌","胸鎖乳突肌"],
-                "二、舌骨上肌群": ["二腹肌","莖突舌骨肌","下顎舌骨肌","頦舌骨肌"],
-                "三、舌骨下肌群": ["胸骨舌骨肌","肩胛舌骨肌","胸骨甲狀肌","甲狀舌骨肌"],
-                "四、深層頸屈肌": ["頸長肌","頭長肌","前直肌","外側直肌"],
-                "五、斜角肌群": ["前斜角肌","中斜角肌","後斜角肌","最小斜角肌"],
-                "六、頭後深層小肌群": ["頭後大直肌","頭後小直肌","上斜肌","下斜肌"],
-                "七、咽肌": ["上咽縮肌","中咽縮肌","下咽縮肌","莖突咽肌","顎咽肌","耳咽肌"],
-                "八、喉內在肌": ["環甲肌","後環杓肌","外側環杓肌","橫杓肌","斜杓肌","甲杓肌","聲帶肌"]
-            },
-            "第3部分：背部與胸部肌肉": {
-                "一、背部淺層肌": ["斜方肌","背闊肌","提肩胛肌","菱形大肌","菱形小肌"],
-                "二、背部中層肌": ["上後鋸肌","下後鋸肌"],
-                "三、背部深層肌 (豎脊肌)": ["髂肋肌－腰部","髂肋肌－胸部","髂肋肌－頸部","最長肌－胸部","最長肌－頸部","最長肌－頭部","棘肌－胸部","棘肌－頸部","棘肌－頭部"],
-                "三、背部深層肌 (橫棘肌)": ["半棘肌－胸部","半棘肌－頸部","半棘肌－頭部","多裂肌","旋轉肌"],
-                "三、背部深層肌 (小深層)": ["棘間肌","橫突間肌","提肋肌"],
-                "四、胸部肌肉": ["胸大肌","胸小肌","鎖骨下肌","前鋸肌","外肋間肌","內肋間肌","最內肋間肌","橫胸肌","肋下肌","橫膈膜"]
-            },
-            "第4部分：腹部與骨盆": {
-                "一、腹部肌肉": ["腹直肌","腹外斜肌","腹內斜肌","腹橫肌","錐狀肌"],
-                "二、後腹壁肌": ["腰大肌","腰小肌","髂肌","腰方肌"],
-                "三、骨盆底肌群": ["提肛肌群","恥尾肌","恥直腸肌","髂尾肌","尾骨肌"],
-                "四、會陰肌群": ["球海綿體肌","坐骨海綿體肌","淺會陰橫肌","深會陰橫肌","外尿道括約肌","外肛門括約肌"]
-            },
-            "第5部分：上肢肌肉": {
-                "一、肩帶肌群": ["三角肌","棘上肌","棘下肌","小圓肌","肩胛下肌","大圓肌"],
-                "二、上臂肌群(前)": ["肱二頭肌","肱肌","喙肱肌"],
-                "二、上臂肌群(後)": ["肱三頭肌","肘肌"],
-                "三、前臂前群(屈肌)": ["旋前圓肌","橈側腕屈肌","掌長肌","尺側腕屈肌","指淺屈肌","指深屈肌","拇長屈肌","旋前方肌"],
-                "四、前臂後群(伸肌)": ["肱橈肌","橈側腕長伸肌","橈側腕短伸肌","指伸肌","小指伸肌","尺側腕伸肌","旋後肌","拇長外展肌","拇短伸肌","拇長伸肌","食指伸肌"],
-                "五、手部內在肌": ["拇短外展肌","拇短屈肌","對掌肌","拇收肌","小指外展肌","小指短屈肌","小指對掌肌","掌短肌","第一蚓狀肌","第二蚓狀肌","第三蚓狀肌","第四蚓狀肌","第一掌側骨間肌","第二掌側骨間肌","第三掌側骨間肌","第一背側骨間肌","第二背側骨間肌","第三背側骨間肌","第四背側骨間肌"]
-            },
-            "第6部分：下肢肌肉": {
-                "一、臀部肌群": ["臀大肌","臀中肌","臀小肌","闊筋膜張肌","梨狀肌","上孖肌","內閉孔肌","下孖肌","股方肌","外閉孔肌"],
-                "二、大腿前群": ["股直肌","外側廣肌","內側廣肌","中間廣肌","縫匠肌"],
-                "三、大腿內側群": ["恥骨肌","內收長肌","內收短肌","內收大肌","股薄肌"],
-                "四、大腿後群": ["股二頭肌","半腱肌","半膜肌"],
-                "五、小腿前群": ["脛前肌","趾長伸肌","拇長伸肌","第三腓骨肌"],
-                "六、小腿外側群": ["腓骨長肌","腓骨短肌"],
-                "七、小腿後群(表層)": ["腓腸肌","比目魚肌","蹠肌"],
-                "七、小腿後群(深層)": ["膕肌","脛後肌","趾長屈肌","拇長屈肌"]
-            },
-            "第7部分：足部內在肌": {
-                "一、足背肌": ["趾短伸肌","拇短伸肌"],
-                "二、足底第一層": ["拇短外展肌","趾短屈肌","小趾外展肌"],
-                "二、足底第二層": ["足底方肌","第一蚓狀肌","第二蚓狀肌","第三蚓狀肌","第四蚓狀肌"],
-                "二、足底第三層": ["拇短屈肌","拇收肌","小趾短屈肌"],
-                "二、足底第四層": ["第一背側骨間肌","第二背側骨間肌","第三背側骨間肌","第四背側骨間肌","第一足底骨間肌","第二足底骨間肌","第三足底骨間肌"]
-            }
-        };
-
-        const containerList = document.getElementById('muscle-list-container');
-        function renderMuscleList() {
-            let html = '';
-            for (const [part, categories] of Object.entries(muscleData)) {
-                html += `<details class="mb-2 group" open>`;
-                html += `<summary class="flex items-center justify-between p-2 bg-[#1f2b39] rounded-lg cursor-pointer hover:bg-[#2a384b] transition font-semibold text-orange-300 sticky top-0 z-10"><span>${part}</span><span class="chevron transition-transform">▶</span></summary>`;
-                html += `<div class="pl-2 mt-1 space-y-2">`;
-                for (const [cat, muscles] of Object.entries(categories)) {
-                    html += `<div class="text-xs text-gray-400 mt-2">${cat}</div>`;
-                    html += `<div class="grid grid-cols-1 gap-0">`;
-                    muscles.forEach(m => {
-                        html += `<div class="muscle-item px-3 py-1.5 rounded-md text-gray-200 hover:text-white" data-muscle="${m}">${m}</div>`;
+    <script>
+        (function() {
+            // 初始化所有 feeling 點擊效果
+            const feelingSections = document.querySelectorAll('.feeling-select');
+            feelingSections.forEach(section => {
+                const btns = section.querySelectorAll('.feeling-btn');
+                btns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        // 同一個 section 內只能選一個 (單選)
+                        const parent = this.parentNode;
+                        parent.querySelectorAll('.feeling-btn').forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
                     });
-                    html += `</div>`;
-                }
-                html += `</div></details>`;
-            }
-            containerList.innerHTML = html;
-
-            document.querySelectorAll('.muscle-item').forEach(el => {
-                el.addEventListener('click', (e) => {
-                    const muscleName = el.dataset.muscle;
-                    highlightBodyPart(muscleName);
-                    document.querySelectorAll('.muscle-item').forEach(i => i.classList.remove('selected', 'bg-[#1e3a5f]', 'border-l-4', 'border-orange-400'));
-                    el.classList.add('selected', 'bg-[#1e3a5f]', 'border-l-4', 'border-orange-400');
-                    document.getElementById('selected-muscle-name').classList.remove('hidden');
-                    document.getElementById('selected-muscle-text').innerText = muscleName;
                 });
             });
-        }
-        renderMuscleList();
 
-        // 搜尋過濾
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            const term = e.target.value.trim().toLowerCase();
-            document.querySelectorAll('.muscle-item').forEach(el => {
-                const name = el.dataset.muscle.toLowerCase();
-                el.style.display = name.includes(term) ? 'block' : 'none';
-            });
-        });
+            // 生成圖片的函數
+            function generateNotesImage() {
+                const student = document.getElementById('studentName').value || '學員';
 
-        function highlightBodyPart(muscleName) {
-            bodyParts.forEach((mesh, key) => {
-                mesh.material.color.copy(originalColors.get(key));
-                mesh.material.emissive.setHex(0x000000);
-            });
-            const targetPartKey = muscleMappings.get(muscleName);
-            if (targetPartKey && bodyParts.has(targetPartKey)) {
-                const mesh = bodyParts.get(targetPartKey);
-                mesh.material.color.setHex(0xffaa00); // 高亮金黃色
-                mesh.material.emissive.setHex(0x442200);
-            } else {
-                // 若無對應，閃一下頭部作為提示
-                const headMesh = bodyParts.get('head');
-                if (headMesh) {
-                    headMesh.material.color.setHex(0xff3333);
-                    headMesh.material.emissive.setHex(0x330000);
+                // 收集所有欄位 (為求精簡，我們取得當下數值並組合成一段文字)
+                const bellyIn = document.getElementById('bellyIn').value;
+                const bellyOut = document.getElementById('bellyOut').value;
+                const bellyFeel = getSelectedText('bellyFeeling') || '未選';
+                const bellyNote = document.getElementById('bellyNote').value;
+
+                const d3Front = document.getElementById('d3Front').value;
+                const d3Side = document.getElementById('d3Side').value;
+                const d3Back = document.getElementById('d3Back').value;
+                const d3Feel = getSelectedText('d3Feeling') || '未選';
+                const d3Note = document.getElementById('d3Note').value;
+
+                const inhaleCurr = document.getElementById('inhaleCurr').value;
+                const inhaleGoal = document.getElementById('inhaleGoal').value;
+                const inhaleFeel = getSelectedText('inhaleFeeling') || '未選';
+                const inhaleNote = document.getElementById('inhaleNote').value;
+
+                const exhaleCurr = document.getElementById('exhaleCurr').value;
+                const exhaleGoal = document.getElementById('exhaleGoal').value;
+                const exhaleFeel = getSelectedText('exhaleFeeling') || '未選';
+                const exhaleNote = document.getElementById('exhaleNote').value;
+
+                const ratioIn = document.getElementById('ratioIn').value;
+                const ratioOut = document.getElementById('ratioOut').value;
+                const ratioFeel = getSelectedText('ratioFeeling') || '未選';
+                const ratioNote = document.getElementById('ratioNote').value;
+
+                // 進階
+                const segInCount = document.getElementById('segInhaleCount').value;
+                const segInFeel = getSelectedText('segInFeeling') || '未選';
+                const segInNote = document.getElementById('segInNote').value;
+                const segExCount = document.getElementById('segExhaleCount').value;
+                const segExFeel = getSelectedText('segExFeeling') || '未選';
+                const segExNote = document.getElementById('segExNote').value;
+
+                // 建立 canvas (A4比例近似，寬600，高約850)
+                const canvas = document.getElementById('notesCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 600;
+                canvas.height = 900; 
+
+                // 白色背景
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 手繪風格框線
+                ctx.strokeStyle = '#9bbb7b';
+                ctx.lineWidth = 6;
+                ctx.strokeRect(15, 15, canvas.width-30, canvas.height-30);
+
+                // 標題
+                ctx.fillStyle = '#3f6e3f';
+                ctx.font = 'bold 26px "Segoe UI", "微軟正黑體", sans-serif';
+                ctx.fillText('🌬️ 呼吸練習記錄', 50, 80);
+                ctx.font = '18px "Segoe UI", sans-serif';
+                ctx.fillStyle = '#5f7f5f';
+                ctx.fillText('ONE2FIT · Gavin 基礎班', 50, 120);
+                ctx.fillStyle = '#2c4a2c';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.fillText('學員：' + student + '   ' + new Date().toLocaleDateString('zh-TW'), 50, 160);
+
+                // 分隔線
+                ctx.beginPath();
+                ctx.strokeStyle = '#cbd5b8';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 8]);
+                ctx.moveTo(40, 180);
+                ctx.lineTo(560, 180);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                let y = 215;
+                const lineHeight = 32;
+
+                // 輔助函數畫一筆記
+                function drawLine(left, main, right, note='') {
+                    ctx.fillStyle = '#1f3b1f';
+                    ctx.font = '500 15px "Segoe UI", "微軟正黑體"';
+                    ctx.fillText(left, 45, y);
+                    ctx.font = '15px monospace';
+                    ctx.fillStyle = '#3f6e3f';
+                    ctx.fillText(main, 150, y);
+                    if (right) {
+                        ctx.fillStyle = '#6b8f6b';
+                        ctx.font = 'italic 14px sans-serif';
+                        ctx.fillText(right, 320, y);
+                    }
+                    if (note) {
+                        ctx.fillStyle = '#5f5f5f';
+                        ctx.font = '13px sans-serif';
+                        ctx.fillText('✏️ ' + note.substring(0, 28), 45, y+18);
+                        y += 20;
+                    }
+                    y += lineHeight;
                 }
+
+                // 腹式
+                drawLine('①腹式', `吸 ${bellyIn}s / 呼 ${bellyOut}s`, bellyFeel, bellyNote);
+                // 3D
+                drawLine('②3D腹式', `前${d3Front} 側${d3Side} 後${d3Back}`, d3Feel, d3Note);
+                // 吸氣挑戰
+                drawLine('③吸氣長', `${inhaleCurr}s → 目標 ${inhaleGoal}s`, inhaleFeel, inhaleNote);
+                // 吐氣挑戰
+                drawLine('④吐氣長', `${exhaleCurr}s → 目標 ${exhaleGoal}s`, exhaleFeel, exhaleNote);
+                // 1:2急救
+                drawLine('⑤1:2呼吸', `吸 ${ratioIn}s / 吐 ${ratioOut}s`, ratioFeel, ratioNote);
+                
+                // 進階
+                ctx.fillStyle = '#2f5f2f';
+                ctx.font = 'bold 17px sans-serif';
+                ctx.fillText('✨ 進階嘗試', 45, y-5);
+                y += 15;
+                drawLine('  分段吸氣', `${segInCount} 組`, segInFeel, segInNote);
+                drawLine('  分段吐氣', `${segExCount} 組`, segExFeel, segExNote);
+
+                // 總結尾
+                ctx.font = '14px "微軟正黑體", sans-serif';
+                ctx.fillStyle = '#7f9f7f';
+                ctx.fillText('—— 不用完美，只需觀察 ——', 200, 750);
+
+                // 隱藏編輯區，顯示圖片
+                document.getElementById('editableSection').style.display = 'none';
+                document.getElementById('outputImageContainer').classList.add('show');
             }
-        }
 
-        // ----- 新增功能解剖內容 -----
-        const kinesiologyContainer = document.getElementById('kinesiology-container');
-        const kinesHTML = `
-            <div class="action-block">
-                <div class="action-title">1️⃣ 頸椎前屈 (45°–60°)</div>
-                <div class="mb-2"><span class="badge-okc">開鏈</span> <span class="font-semibold">主動肌：</span>胸鎖乳突肌（雙側）、頸長肌、頭長肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">協同肌：</span>舌骨上肌群、前斜角肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">穩定肌：</span>深層頸屈肌、頸椎多裂肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">拮抗肌：</span>頭夾肌、上斜方肌</div>
-                <div class="mb-2"><span class="badge-ckc">閉鏈（坐姿駝背測試）</span> <span class="font-semibold">穩定肌：</span>腹橫肌、下斜方肌； <span class="font-semibold">代償：</span>胸椎彎曲代替頸椎活動</div>
-            </div>
-            <div class="action-block">
-                <div class="action-title">2️⃣ 肩關節屈曲 (180°)</div>
-                <div class="mb-2"><span class="badge-okc">開鏈</span> <span class="font-semibold">主動肌：</span>三角肌前束、胸大肌鎖骨部</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">協同肌：</span>肱二頭肌長頭、喙肱肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">穩定肌：</span>旋轉肌袖四肌、前鋸肌、下斜方肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">拮抗肌：</span>背闊肌、大圓肌</div>
-                <div class="mb-2"><span class="badge-ckc">閉鏈（牆天使）</span> <span class="font-semibold">主動肌：</span>前鋸肌、下斜方肌； <span class="font-semibold">穩定肌：</span>腹橫肌、豎脊肌； <span class="font-semibold">代償：</span>肋骨外翻、腰椎前凸</div>
-            </div>
-            <div class="action-block">
-                <div class="action-title">3️⃣ 肩外展</div>
-                <div class="mb-2"><span class="badge-okc">開鏈</span> <span class="font-semibold">主動肌：</span>棘上肌（前15°）、三角肌中束</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">協同肌：</span>斜方肌（上/下）、前鋸肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">穩定肌：</span>旋轉肌袖</div>
-                <div class="mb-2"><span class="badge-ckc">閉鏈（四足撐地側移）</span> <span class="font-semibold">主動肌：</span>前鋸肌、菱形肌； <span class="font-semibold">穩定肌：</span>腹橫肌、多裂肌</div>
-            </div>
-            <div class="action-block">
-                <div class="action-title">4️⃣ 胸椎旋轉 (45°)</div>
-                <div class="mb-2"><span class="badge-okc">開鏈（坐姿抱胸旋轉）</span> <span class="font-semibold">主動肌：</span>內外腹斜肌、多裂肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">協同肌：</span>豎脊肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">穩定肌：</span>腹橫肌、骨盆底肌</div>
-                <div class="mb-2"><span class="badge-ckc">閉鏈（四足 Thread the Needle）</span> <span class="font-semibold">主動肌：</span>內腹斜肌、旋轉肌群； <span class="font-semibold">穩定肌：</span>前鋸肌、肩胛穩定肌</div>
-            </div>
-            <div class="action-block">
-                <div class="action-title">5️⃣ 髖屈曲 (120°+)</div>
-                <div class="mb-2"><span class="badge-okc">開鏈（仰臥抱膝）</span> <span class="font-semibold">主動肌：</span>髂腰肌、股直肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">協同肌：</span>闊筋膜張肌、縫匠肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">穩定肌：</span>腹橫肌、多裂肌</div>
-                <div class="mb-2"><span class="badge-okc"></span> <span class="font-semibold">拮抗肌：</span>臀大肌、股二頭肌</div>
-                <div class="mb-2"><span class="badge-ckc">閉鏈（深蹲下段）</span> <span class="font-semibold">主動肌：</span>股四頭肌（離心）、臀大肌（離心）； <span class="font-semibold">穩定肌：</span>臀中肌、內收大肌、核心； <span class="font-semibold">代償：</span>骨盆後傾、腰椎彎曲</div>
-            </div>
-            <div class="action-block">
-                <div class="action-title">6️⃣ 髖伸展 (10°–20°)</div>
-                <div class="mb-2"><span class="badge-okc">開鏈（俯臥抬腿）</span> <span class="font-semibold">主動肌：</span>臀大肌； <span class="font-semibold">協同肌：</span>股二頭肌； <span class="font-semibold">代償：</span>腰椎代償伸展</div>
-                <div class="mb-2"><span class="badge-ckc">閉鏈（硬舉頂端）</span> <span class="font-semibold">主動肌：</span>臀大肌、股二頭肌； <span class="font-semibold">穩定肌：</span>多裂肌、腹橫肌</div>
-            </div>
-            <div class="action-block">
-                <div class="action-title">7️⃣ 膝屈曲</div>
-                <div class="mb-2"><span class="badge-okc">開鏈（坐姿屈膝）</span> <span class="font-semibold">主動肌：</span>股二頭肌、半腱肌、半膜肌； <span class="font-semibold">協同肌：</span>腓腸肌； <span class="font-semibold">拮抗肌：</span>股四頭肌</div>
-                <div class="mb-2"><span class="badge-ckc">閉鏈（深蹲下段）</span> <span class="font-semibold">主動肌：</span>股四頭肌（離心）、臀大肌； <span class="font-semibold">穩定肌：</span>臀中肌、內收肌群</div>
-            </div>
-            <div class="action-block">
-                <div class="action-title">8️⃣ 踝背屈</div>
-                <div class="mb-2"><span class="badge-okc">開鏈（勾腳）</span> <span class="font-semibold">主動肌：</span>脛前肌； <span class="font-semibold">協同肌：</span>趾長伸肌； <span class="font-semibold">拮抗肌：</span>腓腸肌、比目魚肌</div>
-                <div class="mb-2"><span class="badge-ckc">閉鏈（牆測試/深蹲）</span> <span class="font-semibold">主動肌：</span>脛前肌（離心）、比目魚肌（控制）； <span class="font-semibold">穩定肌：</span>足底內在肌、腓骨長肌； <span class="font-semibold">代償：</span>足外旋、膝內扣、足弓塌陷</div>
-            </div>
-        `;
-        kinesiologyContainer.innerHTML = kinesHTML;
-
-        // 動畫循環
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update(); // 啟用 autoRotate
-            renderer.render(scene, camera);
-            labelRenderer.render(scene, camera);
-        }
-        animate();
-
-        window.addEventListener('resize', onWindowResize, false);
-        function onWindowResize() {
-            const newWidth = container.clientWidth;
-            const newHeight = container.clientHeight;
-            camera.aspect = newWidth / newHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(newWidth, newHeight);
-            labelRenderer.setSize(newWidth, newHeight);
-        }
-
-        // 預設高亮胸大肌
-        setTimeout(() => {
-            highlightBodyPart('胸大肌');
-            const item = Array.from(document.querySelectorAll('.muscle-item')).find(el => el.dataset.muscle === '胸大肌');
-            if(item) {
-                item.classList.add('selected', 'bg-[#1e3a5f]', 'border-l-4', 'border-orange-400');
-                document.getElementById('selected-muscle-name').classList.remove('hidden');
-                document.getElementById('selected-muscle-text').innerText = '胸大肌';
+            function getSelectedText(divId) {
+                const parent = document.getElementById(divId);
+                if (!parent) return null;
+                const selected = parent.querySelector('.feeling-btn.selected');
+                return selected ? selected.innerText.trim() : null;
             }
-        }, 2000);
+
+            // 產生圖片按鈕
+            document.getElementById('generateBtn').addEventListener('click', function(e) {
+                generateNotesImage();
+            });
+
+            // 返回編輯
+            document.getElementById('backEditBtn').addEventListener('click', function() {
+                document.getElementById('editableSection').style.display = 'block';
+                document.getElementById('outputImageContainer').classList.remove('show');
+            });
+        })();
     </script>
 </body>
 </html>
