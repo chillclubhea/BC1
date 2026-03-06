@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>進階班 · 呼吸練習課堂筆記</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #e1eef7;
+            font-family: 'Segoe UI', '微軟正黑體', 'Helvetica Neue', sans-serif;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .notebook {
+            max-width: 860px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 32px 32px 32px 32px;
+            box-shadow: 0 25px 50px -12px rgba(26, 75, 110, 0.4);
+            overflow: hidden;
+            border: 1px solid #b8d6e5;
+        }
+        .header {
+            background: linear-gradient(135deg, #1A4B6E 0%, #0f3550 100%);
+            color: white;
+            padding: 28px 28px 20px 28px;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .header h1 span {
+            font-weight: 300;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .header .sub {
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .logo-place {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
+        .content {
+            padding: 24px 28px 36px 28px;
+            background: #fefefe;
+        }
+        .instructor {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed #b0c9da;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            font-size: 1.1rem;
+            color: #1A4B6E;
+            flex-wrap: wrap;
+        }
+        .instructor strong {
+            background: #e4f0f9;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #0f3550;
+        }
+
+        /* 卡片區塊 */
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 500;
+            color: #1A4B6E;
+            border-left: 8px solid #FF8C42;
+            padding-left: 18px;
+            margin: 30px 0 20px 0;
+            letter-spacing: 1px;
+        }
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            background: #ffffff;
+            border: 1px solid #d4e2ec;
+            border-radius: 28px;
+            padding: 18px 22px 22px 22px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+            flex: 1 1 300px;
+        }
+        .card-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .card-name {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #0f3550;
+        }
+        .card-name small {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #5d89a5;
+            margin-left: 6px;
+        }
+        .card-tip {
+            background: #e4f0f9;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            color: #1A4B6E;
+        }
+        .field-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px 20px;
+            margin: 15px 0 10px 0;
+        }
+        .field-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f2f8fd;
+            padding: 6px 16px 6px 12px;
+            border-radius: 50px;
+            color: #1A4B6E;
+        }
+        .field-label input, .field-label select {
+            border: none;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 30px;
+            font-size: 1rem;
+            width: 80px;
+            text-align: center;
+            border: 1px solid #b8d6e5;
+            font-weight: 500;
+            color: #0f3550;
+            outline: none;
+        }
+        .feeling-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .feeling-btn {
+            background: #f2f8fd;
+            border: 1px solid #b8d6e5;
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 0.95rem;
+            color: #1A4B6E;
+            cursor: pointer;
+            transition: 0.1s;
+            user-select: none;
+        }
+        .feeling-btn.selected {
+            background: #FF8C42;
+            border-color: #e0661f;
+            color: white;
+            font-weight: 500;
+        }
+        .remark-area {
+            margin: 16px 0 6px 0;
+        }
+        .remark-area textarea {
+            width: 100%;
+            border: 1px solid #b8d6e5;
+            border-radius: 24px;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            background: #f9fcff;
+            resize: vertical;
+            font-family: inherit;
+        }
+        .coach-section {
+            background: #eef5f9;
+            border-radius: 28px;
+            padding: 22px 24px;
+            margin-top: 30px;
+            border: 2px dashed #FF8C42;
+        }
+        .coach-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #1A4B6E;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .plan-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .plan-table th {
+            background: #1A4B6E;
+            color: white;
+            padding: 10px;
+            font-weight: 500;
+        }
+        .plan-table td {
+            border: 1px solid #b8d6e5;
+            padding: 8px;
+            text-align: center;
+        }
+        .plan-table input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .generate-area {
+            display: flex;
+            justify-content: center;
+            margin: 45px 0 20px;
+        }
+        .gen-btn {
+            background: #1A4B6E;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 500;
+            padding: 18px 42px;
+            border-radius: 50px;
+            box-shadow: 0 12px 18px -8px #8fa9bb;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid #2d6a94;
+            letter-spacing: 1.5px;
+        }
+        .gen-btn:hover {
+            background: #0f3550;
+            transform: scale(0.98);
+        }
+        .footer-note {
+            text-align: center;
+            color: #5d89a5;
+            font-size: 0.9rem;
+            margin-top: 16px;
+        }
+        #outputImageContainer {
+            display: none;
+            margin-top: 30px;
+            background: white;
+            border-radius: 40px;
+            padding: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 2px solid #FF8C42;
+        }
+        #outputImageContainer.show {
+            display: block;
+        }
+        #notesCanvas {
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+            border: 1px solid #b8d6e5;
+        }
+        .back-btn {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .back-btn button {
+            background: #e4f0f9;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            color: #1A4B6E;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="notebook" id="notebookWidget">
+        <div class="header">
+            <h1>進階呼吸 · 課堂筆記 <span>解密數據，優化模式</span></h1>
+            <div class="sub">
+                <div class="logo-place"><span>🏛️ ONE2FIT運動康復中心</span></div>
+                <div class="logo-place"><span>🧘 講師 Gavin</span></div>
+            </div>
+        </div>
+        <div class="content" id="editableSection">
+            <div class="instructor">
+                <span>🌱 學員： <input type="text" placeholder="你的名字" style="border:none;background:#f2f8fd;padding:6px 12px;border-radius:30px;width:150px;" id="studentName"></span>
+                <span><strong># 數據 · 診斷 · 進階</strong></span>
+            </div>
+
+            <!-- 第一部分：呼吸身分證 (基礎數據) -->
+            <div class="section-title">🔬 呼吸身分證</div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header"><span class="card-name">呼吸頻率</span></div>
+                    <div class="field-row">
+                        <div class="field-label"><span>30秒次數</span> <input type="number" id="breath30" value="8" min="4" max="30"></div>
+                        <span>×2 = <span id="breathPerMin">16</span> 次/分</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-name">吸氣長 <small>站姿</small></span></div>
+                    <div class="field-row"><div class="field-label"><span>秒數</span> <input type="number" id="inhaleStand" value="7" min="2" max="60"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-name">呼氣長 <small>站姿</small></span></div>
+                    <div class="field-row"><div class="field-label"><span>秒數</span> <input type="number" id="exhaleStand" value="32" min="5" max="120"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-name">憋氣測試 <small>呼氣後</small></span></div>
+                    <div class="field-row"><div class="field-label"><span>秒數</span> <input type="number" id="breathHold" value="45" min="10" max="300"></div></div>
+                </div>
+            </div>
+
+            <!-- 第二部分：胸式呼吸評估 -->
+            <div class="section-title">📐 胸式呼吸評估</div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header"><span class="card-name">上胸 (鎖骨)</span><span class="card-tip">吸氣時鎖骨上抬 ≤1cm</span></div>
+                    <div class="feeling-select" id="upperChest">
+                        <span class="feeling-btn">正常</span>
+                        <span class="feeling-btn">超過1cm</span>
+                        <span class="feeling-btn">不動</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-name">中胸 (肋骨)</span><span class="card-tip">向外向上打開</span></div>
+                    <div class="feeling-select" id="midChest">
+                        <span class="feeling-btn">正常</span>
+                        <span class="feeling-btn">向外不足</span>
+                        <span class="feeling-btn">向上不足</span>
+                        <span class="feeling-btn">幾乎不動</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-name">下胸 (下部肋骨)</span></div>
+                    <div class="feeling-select" id="lowChest">
+                        <span class="feeling-btn">正常開合</span>
+                        <span class="feeling-btn">開合不足</span>
+                        <span class="feeling-btn">肋骨外翻</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-name">後胸 (後背)</span></div>
+                    <div class="feeling-select" id="backChest">
+                        <span class="feeling-btn">有打開</span>
+                        <span class="feeling-btn">沒感覺</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第三部分：常見問題診斷 (簡易對照) -->
+            <div class="section-title">🔍 常見問題診斷</div>
+            <div class="card">
+                <div class="card-header"><span class="card-name">數據異常 vs 問題肌肉</span></div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div><input type="checkbox" id="issue1"> <label for="issue1">坐姿呼氣長 > 站姿</label></div>
+                    <div>→ 腰大肌</div>
+                    <div><input type="checkbox" id="issue2"> <label for="issue2">翹腿呼氣長 > 站姿</label></div>
+                    <div>→ 腰方肌</div>
+                    <div><input type="checkbox" id="issue3"> <label for="issue3">含胸吸氣 > 挺胸吸氣</label></div>
+                    <div>→ 胸橫肌</div>
+                    <div><input type="checkbox" id="issue4"> <label for="issue4">呼氣長不足＋按壓鬆軟</label></div>
+                    <div>→ 腹橫肌</div>
+                </div>
+                <div class="remark-area">
+                    <textarea placeholder="其他觀察（例如單側肋骨開合差異）" rows="2" id="diagnosisNote"></textarea>
+                </div>
+            </div>
+
+            <!-- 第四部分：進階訓練記錄 -->
+            <div class="section-title">⚡ 進階訓練記錄</div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header"><span class="card-name">扣擊呼吸法</span></div>
+                    <div class="field-row"><div class="field-label"><span>完成圈數</span> <input type="number" id="knockRounds" value="3" min="0" max="20"></div></div>
+                    <div class="feeling-select" id="knockFeel">
+                        <span class="feeling-btn">腹部發熱</span>
+                        <span class="feeling-btn">核心有感</span>
+                        <span class="feeling-btn">敲不準</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-name">1:4呼吸法</span></div>
+                    <div class="field-row"><div class="field-label"><span>吸氣</span> <input type="number" id="ratioIn" value="3" min="2" max="10">秒</div></div>
+                    <div class="field-row"><div class="field-label"><span>呼氣</span> <input type="number" id="ratioOut" value="12" min="4" max="40">秒</div></div>
+                    <div class="feeling-select" id="ratioFeel">
+                        <span class="feeling-btn">放鬆</span>
+                        <span class="feeling-btn">吐氣不夠長</span>
+                        <span class="feeling-btn">節奏順暢</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-name">吸管呼吸法</span></div>
+                    <div class="field-row"><div class="field-label"><span>次數</span> <input type="number" id="strawCount" value="5" min="0" max="30"></div></div>
+                    <div class="feeling-select" id="strawFeel">
+                        <span class="feeling-btn">腹部收緊</span>
+                        <span class="feeling-btn">臉頰酸</span>
+                        <span class="feeling-btn">順暢</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 教練專區 (折疊式) -->
+            <details class="coach-section">
+                <summary class="coach-title">👨‍🏫 教練專區 (點擊展開)</summary>
+                <div style="margin-top:15px;">
+                    <p><strong>客戶類型與呼吸策略</strong></p>
+                    <ul style="margin-left:20px;">
+                        <li>辦公室久坐族 → 胸橫肌、腰大肌分離</li>
+                        <li>運動愛好者 → 單側不平衡、運動呼吸配合</li>
+                        <li>失眠/焦慮者 → 延長吐氣、1:4呼吸</li>
+                        <li>產後媽媽 → 腹橫肌激活、盆底肌訓練</li>
+                    </ul>
+                    <p><strong>呼吸訓練禁忌症</strong>：不穩定性心絞痛、氣胸、近期眼科手術、懷孕早期等。</p>
+                    <textarea placeholder="教練筆記（客戶特殊狀況）" rows="3" style="width:100%; border-radius:20px; padding:10px; border:1px solid #b8d6e5;" id="coachNote"></textarea>
+                </div>
+            </details>
+
+            <!-- 一週行動計劃 -->
+            <div class="section-title">📅 一週行動計劃</div>
+            <table class="plan-table">
+                <tr><th>星期</th><th>練習1</th><th>練習2</th><th>完成✔</th></tr>
+                <tr><td>週一</td><td><input type="text" id="mon1" placeholder="例如扣擊"></td><td><input type="text" id="mon2" placeholder="例如1:4"></td><td><input type="checkbox" id="monChk"></td></tr>
+                <tr><td>週二</td><td><input type="text" id="tue1"></td><td><input type="text" id="tue2"></td><td><input type="checkbox" id="tueChk"></td></tr>
+                <tr><td>週三</td><td><input type="text" id="wed1"></td><td><input type="text" id="wed2"></td><td><input type="checkbox" id="wedChk"></td></tr>
+                <tr><td>週四</td><td><input type="text" id="thu1"></td><td><input type="text" id="thu2"></td><td><input type="checkbox" id="thuChk"></td></tr>
+                <tr><td>週五</td><td><input type="text" id="fri1"></td><td><input type="text" id="fri2"></td><td><input type="checkbox" id="friChk"></td></tr>
+                <tr><td>週末</td><td><input type="text" id="sat1"></td><td><input type="text" id="sat2"></td><td><input type="checkbox" id="satChk"></td></tr>
+            </table>
+
+            <!-- 生成圖片按鈕 -->
+            <div class="generate-area">
+                <button class="gen-btn" id="generateBtn">📸 生成圖片筆記</button>
+            </div>
+            <div class="footer-note">記錄當下數據，見證每一次進步</div>
+        </div>
+
+        <!-- 圖片輸出區 -->
+        <div id="outputImageContainer">
+            <h3 style="color:#1A4B6E; margin-bottom: 15px;">🧾 進階呼吸練習筆記</h3>
+            <canvas id="notesCanvas" style="width:100%; height:auto; background:white; border-radius:24px;"></canvas>
+            <div class="back-btn"><button id="backEditBtn">返回繼續編輯</button></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // 所有 feeling 按鈕點擊事件
+            document.querySelectorAll('.feeling-select').forEach(section => {
+                section.querySelectorAll('.feeling-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const parent = this.parentNode;
+                        parent.querySelectorAll('.feeling-btn').forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
+                    });
+                });
+            });
+
+            // 呼吸頻率計算
+            const breath30Input = document.getElementById('breath30');
+            const breathPerMinSpan = document.getElementById('breathPerMin');
+            function updateFreq() {
+                let val = parseFloat(breath30Input.value) || 8;
+                breathPerMinSpan.innerText = (val * 2).toFixed(0);
+            }
+            breath30Input.addEventListener('input', updateFreq);
+            updateFreq();
+
+            // 取得選中的按鈕文字
+            function getSelectedText(groupId) {
+                const group = document.getElementById(groupId);
+                if (!group) return '';
+                const selected = group.querySelector('.feeling-btn.selected');
+                return selected ? selected.innerText.trim() : '未選';
+            }
+
+            // 生成圖片
+            function generateImage() {
+                const canvas = document.getElementById('notesCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 600;
+                canvas.height = 950;  // 預留足夠高度
+
+                // 白色背景
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // 邊框
+                ctx.strokeStyle = '#1A4B6E';
+                ctx.lineWidth = 6;
+                ctx.strokeRect(15, 15, canvas.width-30, canvas.height-30);
+
+                ctx.fillStyle = '#1A4B6E';
+                ctx.font = 'bold 26px "Segoe UI", "微軟正黑體", sans-serif';
+                ctx.fillText('進階呼吸練習筆記', 45, 70);
+
+                ctx.font = '16px "Segoe UI", sans-serif';
+                ctx.fillStyle = '#5d89a5';
+                ctx.fillText('ONE2FIT · Gavin', 45, 110);
+
+                const student = document.getElementById('studentName').value || '學員';
+                const today = new Date().toLocaleDateString('zh-TW');
+                ctx.fillStyle = '#0f3550';
+                ctx.font = 'bold 15px sans-serif';
+                ctx.fillText('學員：' + student + '  ' + today, 45, 150);
+
+                // 分隔線
+                ctx.beginPath();
+                ctx.strokeStyle = '#b8d6e5';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 8]);
+                ctx.moveTo(40, 170);
+                ctx.lineTo(560, 170);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                let y = 200;
+                const lineHeight = 32;
+                function drawLine(left, main, right, note = '') {
+                    ctx.fillStyle = '#0f3550';
+                    ctx.font = '500 15px "Segoe UI", "微軟正黑體"';
+                    ctx.fillText(left, 45, y);
+                    ctx.font = '15px monospace';
+                    ctx.fillStyle = '#1A4B6E';
+                    ctx.fillText(main, 160, y);
+                    if (right) {
+                        ctx.fillStyle = '#5d89a5';
+                        ctx.font = 'italic 14px sans-serif';
+                        ctx.fillText(right, 330, y);
+                    }
+                    if (note) {
+                        ctx.fillStyle = '#5f5f5f';
+                        ctx.font = '13px sans-serif';
+                        ctx.fillText('✏️ ' + note.substring(0, 30), 45, y+20);
+                        y += 20;
+                    }
+                    y += lineHeight;
+                }
+
+                // 收集數據
+                const freq = breathPerMinSpan.innerText + ' 次/分';
+                const inhale = document.getElementById('inhaleStand').value + ' 秒';
+                const exhale = document.getElementById('exhaleStand').value + ' 秒';
+                const hold = document.getElementById('breathHold').value + ' 秒';
+                const upper = getSelectedText('upperChest');
+                const mid = getSelectedText('midChest');
+                const low = getSelectedText('lowChest');
+                const back = getSelectedText('backChest');
+
+                const issues = [];
+                if (document.getElementById('issue1').checked) issues.push('腰大肌');
+                if (document.getElementById('issue2').checked) issues.push('腰方肌');
+                if (document.getElementById('issue3').checked) issues.push('胸橫肌');
+                if (document.getElementById('issue4').checked) issues.push('腹橫肌');
+                const issueStr = issues.length ? issues.join('、') : '無';
+
+                const knock = document.getElementById('knockRounds').value + ' 圈';
+                const knockFeel = getSelectedText('knockFeel');
+                const ratioIn = document.getElementById('ratioIn').value;
+                const ratioOut = document.getElementById('ratioOut').value;
+                const ratioFeel = getSelectedText('ratioFeel');
+                const straw = document.getElementById('strawCount').value + ' 次';
+                const strawFeel = getSelectedText('strawFeel');
+
+                const coachNote = document.getElementById('coachNote').value;
+
+                // 繪製
+                drawLine('📊 呼吸頻率', freq, '');
+                drawLine('📏 吸氣長', inhale, '');
+                drawLine('📏 呼氣長', exhale, '');
+                drawLine('⏱️ 憋氣', hold, '');
+                drawLine('🔹 上胸', upper, '');
+                drawLine('🔹 中胸', mid, '');
+                drawLine('🔹 下胸', low, '');
+                drawLine('🔹 後胸', back, '');
+                drawLine('🔍 問題肌肉', issueStr, '');
+                drawLine('🥊 扣擊', knock, knockFeel);
+                drawLine('🌀 1:4呼吸', `${ratioIn}s / ${ratioOut}s`, ratioFeel);
+                drawLine('🥤 吸管', straw, strawFeel);
+
+                // 一週計劃簡要
+                const mon = document.getElementById('mon1').value + ' / ' + document.getElementById('mon2').value;
+                const tue = document.getElementById('tue1').value + ' / ' + document.getElementById('tue2').value;
+                ctx.fillStyle = '#0f3550';
+                ctx.font = 'bold 15px sans-serif';
+                ctx.fillText('📅 一週計劃', 45, y); y += 25;
+                ctx.font = '14px sans-serif';
+                ctx.fillText('週一: ' + mon, 60, y); y += 22;
+                ctx.fillText('週二: ' + tue, 60, y); y += 22;
+
+                if (coachNote) {
+                    ctx.fillStyle = '#1A4B6E';
+                    ctx.font = 'bold 15px sans-serif';
+                    ctx.fillText('👨‍🏫 教練筆記', 45, y); y += 22;
+                    ctx.font = '13px sans-serif';
+                    ctx.fillStyle = '#333';
+                    const lines = coachNote.split('\n');
+                    for (let l of lines) {
+                        ctx.fillText(l.substring(0, 50), 60, y);
+                        y += 18;
+                        if (y > 920) break;
+                    }
+                }
+
+                // 切換顯示
+                document.getElementById('editableSection').style.display = 'none';
+                document.getElementById('outputImageContainer').classList.add('show');
+            }
+
+            document.getElementById('generateBtn').addEventListener('click', generateImage);
+            document.getElementById('backEditBtn').addEventListener('click', function() {
+                document.getElementById('editableSection').style.display = 'block';
+                document.getElementById('outputImageContainer').classList.remove('show');
+            });
+        })();
+    </script>
+</body>
+</html>
